@@ -16,7 +16,7 @@ export default function Home() {
             RAG Knowledge Base Chatbot
           </h1>
           <p className="text-muted-foreground md:text-xl">
-            Upload your PDF documents and chat with them instantly using AI.
+            Upload your PDF documents and chat with them instantly using AI. Login to get started!
           </p>
         </div>
 
