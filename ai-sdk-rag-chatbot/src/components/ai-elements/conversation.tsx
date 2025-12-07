@@ -1,3 +1,4 @@
+// src/components/ai-elements/conversation.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,12 @@ export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
 export const Conversation = ({ className, ...props }: ConversationProps) => (
   <StickToBottom
-    className={cn("relative flex-1 overflow-y-hidden", className)}
-    initial="smooth"
-    resize="smooth"
+    // 1. Enable vertical scrolling (auto) and apply the class to hide the bar
+    className={cn("relative flex-1 overflow-y-auto scrollbar-hide", className)}
+    // 2. Fix scroll jumpiness
+    initial="instant" 
+    // 3. Fix scroll jumpiness
+    resize="instant"   
     role="log"
     {...props}
   />

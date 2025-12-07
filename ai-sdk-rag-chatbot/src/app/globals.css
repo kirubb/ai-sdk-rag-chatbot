@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
+/* Add this to src/app/globals.css */
+
+.scrollbar-hide {
+    /* For Firefox */
+    scrollbar-width: none;
+    /* For IE and Edge */
+    -ms-overflow-style: none;
+}
+
+/* For Chrome, Safari, and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
