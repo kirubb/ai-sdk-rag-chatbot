@@ -7,7 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 // Define the shape of the response from the Server Action
 type UploadResponse = {
@@ -105,6 +107,15 @@ export default function PDFUpload() {
                   </AlertTitle>
                   <AlertDescription>{message.text}</AlertDescription>
                 </Alert>
+              )}
+
+              {message?.type === "success" && (
+                <Link href="/chat">
+                  <Button variant="outline" className="gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Chat
+                  </Button>
+                </Link>
               )}
             </div>
           </CardContent>
