@@ -1,5 +1,6 @@
-// src/lib/search.ts
-import { cosineDistance, desc, gt, sql } from "drizzle-orm";
+import { cosineDistance, desc, gt, sql, eq, and } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
+
 import { db } from "./db-config";
 import { documents } from "./db-schema";
 import { generateEmbedding } from "./embeddings";
@@ -12,7 +13,14 @@ export async function searchDocuments(
   limit: number = 5,
   threshold: number = 0.5
 ) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return [];
+  }
+
   // Generate embedding for the search query
+
   const embedding = await generateEmbedding(query);
 
   // Calculate similarity using Drizzle's cosineDistance(not similarity) function
@@ -30,7 +38,7 @@ export async function searchDocuments(
       similarity,
     })
     .from(documents)
-    .where(gt(similarity, threshold))
+    .where(and(gt(similarity, threshold), eq(documents.userId, userId)))
     .orderBy(desc(similarity))
     .limit(limit);
 

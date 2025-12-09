@@ -6,9 +6,16 @@ import { db } from "@/lib/db-config";
 import { documents } from "@/lib/db-schema";
 import { generateEmbeddings } from "@/lib/embeddings";
 import { chunkContent } from "@/lib/chunking";
+import { auth } from "@clerk/nextjs/server";
 
 export async function processPdfFile(formData: FormData) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return { success: false, error: "Unauthorized" };
+    }
+
     const file = formData.get("pdf") as File;
 
     if (!file) {
@@ -20,7 +27,6 @@ export async function processPdfFile(formData: FormData) {
 
     // Wrap the event-based parser in a Promise so we can 'await' it
     return new Promise(async (resolve, reject) => {
-      
       // Initialize parser (null = no specialized config, true = enable raw text extraction)
       const pdfParser = new PDFParser(null, true);
 
@@ -51,6 +57,7 @@ export async function processPdfFile(formData: FormData) {
           const records = chunks.map((chunk, index) => ({
             content: chunk,
             embedding: embeddings[index],
+            userId: userId,
           }));
 
           // Save to DB
@@ -60,10 +67,12 @@ export async function processPdfFile(formData: FormData) {
             success: true,
             message: `Successfully processed PDF. Created ${records.length} searchable chunks.`,
           });
-          
         } catch (innerError) {
           console.error("Processing Logic Error:", innerError);
-          resolve({ success: false, error: "Failed during chunking or embedding" });
+          resolve({
+            success: false,
+            error: "Failed during chunking or embedding",
+          });
         }
       });
 
@@ -75,7 +84,6 @@ export async function processPdfFile(formData: FormData) {
         resolve({ success: false, error: "File buffer is corrupt" });
       }
     });
-
   } catch (error) {
     console.error("Upload Handler Error:", error);
     return {

@@ -1,10 +1,11 @@
 import {
   SignInButton,
-  SignOutButton,
   SignUpButton,
   SignedIn,
   SignedOut,
+  useClerk,
 } from "@clerk/nextjs";
+import { deleteUserData } from "@/lib/user-actions";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -31,12 +32,29 @@ export const Navigation = () => {
           </SignedOut>
 
           <SignedIn>
-            <SignOutButton>
-              <Button variant="outline">Sign Out</Button>
-            </SignOutButton>
+            <CustomSignOut />
           </SignedIn>
         </div>
       </div>
     </nav>
+  );
+};
+
+const CustomSignOut = () => {
+  const { signOut } = useClerk();
+
+  const handleSignOut = async () => {
+    try {
+      await deleteUserData();
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  return (
+    <Button variant="outline" onClick={handleSignOut}>
+      Sign Out
+    </Button>
   );
 };
